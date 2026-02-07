@@ -1,0 +1,114 @@
+<!--
+★このプログラムコーディング中に気付いた重要なこと！★
+forEachは「対象の配列・リストのすべての要素に、同じ処理をする」
+→ この「同じ処理を一気にやる」というイメージが大事！
+→ 第二引数として私た値ががｲﾝﾃﾞｯｸｽの意味を持つ！！
+対して、通常のfor文は「ループのたびに1個だけ処理して次に進む」
+→ インデックスでピンポイントに指定できる！
+
+★要件定義★
+テーブルタグで９ｘ９のマスを作る
+縦横のセルに１～９を並べる⇒縦横で数字の重複禁止！！
+その中の３ｘ３のマスも数字の重複禁止！！
+
+【ステップ1：検証関数の設計】
+
+✅ 確認すべき3つのポイント：
+同じ行（row）にその数字がすでにないか？
+同じ列（col）にその数字がすでにないか？
+同じブロック（3×3）にその数字がすでにないか？
+
+✅ 2重配列（9×9の二次元配列）を用意する
+✅ 各行に対してランダムに1〜9の数字を埋める
+→ ただし「同じ列に同じ数字が入らない」制約をつける！
+✅ その結果できた9×9の盤面が「正解盤面」になる
+✅ そこからセルをランダムに抜いて問題にする（空白を作る）
+✅ プレイヤーは空白マスに適切な数字を選んで正解を埋める
+
+★機能★
+問題の自動作成
+経過時間観察、制限時間を設ける
+ミスの回数を制限してゲームオーバーになるようにする
+ヒント機能
+難易度選択（空白のセルの量を調整？調べてその他のロジックを追加）
+ユーザーが自分で枠線や数字の色をカスタマイズ出来る
+-->
+
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <title>Original Nanpure App</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+  </head>
+  <body>
+
+    <!--トップメニュー-->
+    <section id="top-menu">
+      <div id="top-content">      
+        <div id="difficulty-select">
+          <button class="difficulty-btn" data-difficulty="easy">Easy</button>
+          <button class="difficulty-btn" data-difficulty="normal">Normal</button>
+          <button class="difficulty-btn" data-difficulty="hard">Hard</button>
+        </div>      
+        <button id="start-btn">START</button>
+      </div>
+    </section>
+
+    <!--ゲーム画面-->
+    <section id="game" class="hidden">
+      <div class="inner">
+        <h1>Victoria's Sudoku Game</h1>
+        
+        <div id="conditions">
+          <div id="timer">経過時間：0秒</div>
+          <div class="life-wrapper">
+            <span>Life: </span>
+            <div id="lives" class="lives-panel"></div>
+          </div>    
+        
+          <img id="victoria" src="images/chibi_charas/victoria_idle.gif" alt="Victoria"></image>
+          <div id="control-buttons">
+            <button class="retry-btn">リトライ</button>
+            <button class="home-btn">トップへ戻る</button>
+          </div>
+        </div>
+
+        <!--ナンプレ本体-->
+        <table id="sudoku"></table>
+
+        <!--問題の選択肢となる数字パネル-->
+        <div id="number-panel" style="margin-top: 20px;"></div>
+      </div> 
+    </section> 
+    
+    <!-- オーバーレイ（共通）-->
+    <div id="overlay" class="hidden">
+
+      <!--クリア-->
+      <div id="complete-screen" class="overlay-screen hidden"> 
+        <div class="overlay-content">          
+          <div class="overlay-buttons">            
+            <button class="retry-btn">リトライ</button>
+            <button class="home-btn">トップへ戻る</button>
+          </div>             
+          <p>おめでとうございます。ゲームクリアです。</p>        
+        </div>
+      </div>
+
+      <!--ゲームオーバー-->
+      <div id="gameover-screen" class="overlay-screen hidden">
+        <div class="overlay-content">
+          <div class="overlay-buttons">
+            <button class="retry-btn">リトライ</button>
+            <button class="home-btn">トップへ戻る</button>
+          </div>
+          <p>お手付きが上限に達しました。</p>        
+        </div>  
+      </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>
