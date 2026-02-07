@@ -104,7 +104,7 @@ function handleCorrect(cell) {
     if (cell) cell.classList.remove("correct");
   }, 700);
   */
-
+  playSound("correct");
   console.log("[TRACE] handleCorrect end");
 }    
 
@@ -207,7 +207,7 @@ function showOverlay(type) {
 function showComplete() {
   console.log("CLEAR triggered")
   
-  /クリア時のoverlayを表示させる
+  //クリア時のoverlayを表示させる
   stopTimer();//タイマー停止
 
   if (gameState.selectedCell) {

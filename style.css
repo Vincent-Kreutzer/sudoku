@@ -80,6 +80,11 @@ section {
   right:20px;
 }
 
+#sudoku {
+  border: 3px solid #333;
+  border-collapse: collapse;
+}
+
 #sudoku,
 #number-panel {
   display: block;
@@ -117,6 +122,14 @@ td {
   border: 1px solid black;
   text-align: center;
   vertical-align: middle;    
+}
+
+#sudoku td:nth-child(3n) {
+  border-right: 3px solid #333;
+}
+
+#sudoku tr:nth-child(3n) {
+  border-bottom: 3px solid #333;
 }
 
 /*難易度選択ボタン*/
