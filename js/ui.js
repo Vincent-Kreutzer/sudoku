@@ -13,10 +13,10 @@ export const ui = {};//空のオブジェクト定義、関数でスタートメ
 //関数内でDOMを取得する
 function initUI() {
 
-  ui.board = document.querySelector('#board');
-  ui.game = document.getElementById("game");
+  ui.topContent = document.getElementById("top-content")
+  ui.board = document.querySelector("#board");
+  ui.game = document.getElementById("game-body");
 
-  ui.topMenu = document.querySelector("#top-menu");//各難易度とスタートボタン
   ui.difficultyBtns = document.querySelectorAll(".difficulty-btn");
   ui.startBtn = document.getElementById("start-btn");
   ui.retryBtns = document.querySelectorAll(".retry-btn");
@@ -30,20 +30,72 @@ function initUI() {
   ui.complete = document.getElementById("complete-screen");
   ui.gameover = document.getElementById("gameover-screen");
 
+  ui.character = {}
+  ui.character.idle = document.getElementById("gif-idle"),
+  ui.character.correct =  document.getElementById("gif-correct"),
+  ui.character.incorrect = document.getElementById("gif-incorrect"),
+  ui.character.clear = document.getElementById("gif-clear"),
+  ui.character.gameover = document.getElementById("gif-gameover")
+    
 }
 
 
 //ちびキャラクリックで照れモーション
 let chibiLocked = false;
-//状態に応じたヴィクトリアの表情表示(FSM従属)
-function showVictoriaEmotion(type) {
-  if (gameState.currentState !== STATE.PLAYING) return;
+
+function showChibiChara(type) {
+  //まず全てを非表示にする
+  Object.values(ui.character).forEach(img => {
+    img.style.display = "none";
+  });
+  //指定した画像だけ表示する
+  ui.character[type].style.display = "block";
+}
+
+/*状態に応じたヴィクトリアの表情表示(FSM従属)
+function showVictoriaEmotions({turnResult, gameResult}) {
+  const turnEmotion = charMovementByResult(turnResult);
+  const gameEmotion = charMovementByGameState(gameResult);
+
+  if (
+    gameResult=== "")
+  reactionByResult();
+  reactionByGameState()
   //クリックで表示するちびきゃらgifを時限で変更する
-  //正解不正解時に、表示するちびキャラgifを時限で変更する
-  if (type === "correct") {
-    //ここに表示するちびキャラのURLをいれる！
+  //正解不正解時に、表示するちびキャラgifを時限で変更する  
+}*/
+
+//正解不正解に対してのちびキャラモーション
+function charMovementByResult(result) {
+ if (gameState.clearCount === gameState.numToHide || gameState === STATE.GAME_OVER) return;
+  
+
+  if (result === "correct") {
+  showChibiChara("correct");
+  setTimeout(() => {
+    showChibiChara("idle")
+  }, 1000);
+ }
+
+ if (result === "incorrect") {
+  showChibiChara("incorrect");
+  setTimeout(() => {
+    showChibiChara("idle");
+  }, 1000)
+ }
+}
+
+//クリアかゲームオーバーか
+function charMovementByGameState(gameState) {
+  if (gameState.clearCount === gameState.numToHide) {
+    showChibiChara("clear");
+  }
+
+  if (gameState === "STATE.GAME_OVER") {
+    showChibiChara("gameover");
   }
 }
+
 
 //【FSM従属サブシステム】
 function stopTimer() {
@@ -88,16 +140,15 @@ function handleCorrect(cell) {
   
   if (!cell) return;
 
-  //正解セルを確定して編集不能にする
+  //正解セルを確定して編集不能にする処理
   cell.classList.remove("editable", "selected");//正解セルを固定化
   cell.classList.add("correct", "cell-correct");//正解セルにcorrect属性付与  
+  gameState.clearCount ++;
 
-  //セル・数字を選択前の状態に戻す
+  //セル・数字を選択前の状態に戻す処理
   gameState.selectedCell = null;//盤面の選択解除
   gameState.selectedNum = null;//数字パネルの選択解除
   finalizeCell();//セルのイベントを解除して完全に操作できないようにする
-
-  //★showCorrectGIF();//正解時の演出発火GIF作成の上イベント登録すること★
 
   /*正解演出のcorrectクラスを外すだけ
   setTimeout(() => {
@@ -220,19 +271,21 @@ function showComplete() {
 }
 
 export {  
-  
-  initUI,
-  showVictoriaEmotion,
-  playSound,
-  handleCorrect,
-  handleIncorrect,
-  removeIncorrects,
   addSelected,
+  charMovementByResult,
+  charMovementByGameState,
+  handleIncorrect,
+  handleCorrect,
+  initUI,  
+  playSound,    
+  removeIncorrects,  
   removeSelected,
-  stopTimer,
-  updateTimer,
+  showChibiChara,
   showOverlay,
   showGameover,
   showComplete,
-  updateLivesDisplay
-};
+  
+  stopTimer,
+  updateLivesDisplay,
+  updateTimer
+}

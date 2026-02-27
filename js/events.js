@@ -1,22 +1,24 @@
 import { 
-  DIFFICULTY_SETTINGS,
+  addSelected, 
+  checkAndConfirm,
   createBoardHTML,
-  ui, 
-  initBoard,
+  DIFFICULTY_SETTINGS,
   gameState,
+  initializeCorrect,
+  initBoard,  
   makePuzzle,
-  STATE,
-  setState,  
-  solve,
   removeIncorrects, 
   removeSelected, 
   renderBoard,
-  addSelected, 
-  checkAndConfirm,
+  STATE,
+  setState,  
+  solve,
+  showChibiChara,  
+  ui, 
   updateLivesDisplay,
   updateNumberButtons,
   updateTimer,
-  initializeCorrect
+
  } from "./index.js";
 
 
@@ -32,6 +34,7 @@ function initEvents() {
     
   ui.difficultyBtns.forEach(btn => {
     btn.addEventListener("click", () => {
+      
       clickDifficultyBtn(btn);
     })
   });
@@ -52,17 +55,18 @@ function initEvents() {
 
 //スタートボタンイベント⇒クリックで画面表示切り替え、盤面作成、状態をPLAYINGに変える。
 function clickStartBtn() {  
-    console.log("topMenu:", ui.topMenu);
+    console.log("topContent:", ui.topContent);
     console.log("game:", ui.game);
     console.log("START clicked");
     console.log("state before:", gameState.currentState);
       
     if (gameState.currentState !== STATE.READY) return;
       
-      ui.topMenu.classList.add("hidden");//トップメニュー非表示
+      ui.topContent.classList.add("hidden");//トップメニュー非表示
       ui.game.classList.remove("hidden");//ゲーム画面表示
       ui.startBtn.classList.remove("blink");//スタートボタンの点滅停止
       
+      showChibiChara("idle");
       initBoard();
       createBoardHTML();
       solve();
@@ -85,6 +89,10 @@ function clickDifficultyBtn(btn) {
     console.log("difficulty ignored, state:", gameState.currentState);
     return;  
   }
+  ui.difficultyBtns.forEach(b => {
+    b.classList.remove("selected");
+  });
+
   btn.classList.add("selected");
   const level = btn.dataset.difficulty;//クリックしたボタンの難易度を取得
 
@@ -134,7 +142,7 @@ function clickDifficultyBtn(btn) {
   gameState.timerInterval = setInterval(updateTimer, 1000);
 
   //ゲーム画面を表示(トップから来た場合)
-  ui.topMenu.classList.add("hidden");
+  ui.topContent.classList.add("hidden");
    ui.game.classList.remove("hidden");
 
   //盤面作り直し
@@ -157,15 +165,14 @@ function clickDifficultyBtn(btn) {
 }
 
 
-function backToTop() {    
-
+function backToTop() {   
   
   //オーバーレイを閉じる処理
   ui.overlay.classList.add("hidden");//overlay隠す
   ui.complete.classList.add("hidden");
   ui.gameover.classList.add("hidden");  
   ui.game.classList.add("hidden");//ゲーム画面隠す
-  ui.topMenu.classList.remove("hidden");//トップメニュー表示
+  ui.topContent.classList.remove("hidden");//トップメニュー表示
   ui.difficultyBtns.forEach(btn => btn.classList.remove("selected"));
   document.body.style.overflow = "auto";//クリア・ゲームオーバーで固定したスクロールを復活
 

@@ -1,0 +1,465 @@
+
+
+/*====================
+  1. リセット・共通
+====================*/
+
+
+/*トップ、ゲーム、クリア、ゲームオーバー画面の開閉*/
+.hidden {
+  display: none !important;
+}
+
+
+/*====================
+  2. トップ画面（開始前）
+====================*/
+
+
+#top-content {
+  position: relative;
+  width: 100%;
+  height: 100vh; 
+  background-image: url("images/state_pictures/sudoku_top.png");
+  background-size: contain;        /* 全体にフィット */
+  background-position: center;   /* 画像を中央に配置 */
+  background-repeat: no-repeat;  /* タイル状に繰り返さない */
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding-bottom: 50px;  
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  z-index: 1;
+}
+
+
+#content-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  
+  z-index: 0;
+}
+
+
+.difficulty-btn {
+  font-size: 28px;
+  padding: 15px 30px;
+  margin: 10px;
+  border-radius: 12px;
+}
+
+#start-btn {
+  font-size: 28px;
+  padding: 20px 40px;
+  margin-top: 30px;
+  background-color: #ffcc00;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+
+/*====================
+  3. ゲーム全体レイアウト
+====================*/
+
+#game-body {
+  width: 100%;
+}
+
+
+
+#title-area {
+  font-size: 1.5vh
+}
+
+#game-container {
+  display: flex;
+  flex-direction: column;
+}
+#main-area {
+  
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 30px;
+  justify-content: center;
+
+}
+
+#panel-area {
+  height: 75vh;
+  width: 10vh;
+}
+
+#number-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap:6px;
+}
+
+#number-panel button {
+flex:1;
+}
+
+#sudoku {  
+  height: 75vh;
+  max-height: 600px;
+  min-height: 320px;
+  flex-shrink: 0;
+  aspect-ratio: 1/1; /*側面比率*/
+
+  border: 3px solid #333;
+  table-layout: fixed;  
+  border-collapse: collapse;
+}
+
+
+#sudoku tr:nth-child(3n) td {
+  border-bottom: 3px solid #333;
+}
+
+#sudoku td:nth-child(3n) {
+  border-right: 3px solid #333;
+}
+
+#sudoku td {
+  border: 1px solid #333;
+  text-align: center;
+  vertical-align: middle;
+}
+
+
+#side-area {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+#ui-area {
+  display: flex;
+  flex-direction: column;  
+}
+
+#status-area {
+  display: flex;
+  flex-direction:column;
+  gap: 8px;
+  margin:8px;  
+}
+
+#lives {
+  font-size: 24px;
+}
+#action-area {
+  display:flex;
+  flex-direction: column;
+  
+  gap: 4px;
+}
+#character-area img {
+  max-height: 30vh;
+  max-width: 100%;
+  width: auto;
+} 
+
+
+
+
+/*====================
+  7. 状態・ユーティリティクラス
+====================*/
+
+
+/*選択中クラス*/
+.selected {
+  background-color: #cceeff;
+  border: 2px solid #3399ff;
+}
+
+/*正解クラス*/
+.correct {
+  background-color: #a0e7a0;/*明るい黄緑*/
+  transition: background-color 0.4s ease;
+}
+
+/*不正解クラス*/
+.incorrect {
+  background-color: #f9a6a6;/*淡い赤*/
+  animation: shake 0.3s;
+}
+
+
+/*選択中の難易度選択ボタン*/
+.difficulty-btn.selected {
+  background-color: #ffcc00;
+  color: black;
+  font-weight: bold;
+}
+
+.difficulty-btn.selected {
+  animation: blinkAnim 0.8s linear infinite;
+}
+
+.cell-correct {
+  animation: correctBlink 0.4s ease-out;
+}
+
+/*====================
+  8. オーバーレイ
+====================*/
+
+/*オーバーレイ共通構造*/
+#overlay {
+  display:flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;  
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 99999;
+  animation: fadeIn 1s ease-in-out;
+}
+
+/*画面（complete/gameover共通）*/
+.overlay-screen {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  background: #222;     
+}
+
+
+.overlay-screen p {
+  font-size: 16px;
+  font-weight: bold;    
+}
+
+.overlay-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+.overlay-buttons button {
+  font-size: 20px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: #ff9800;
+  color: #fff;
+  transition: background 0.3s;
+}
+
+.overlay-buttons button:hover {
+  background-color: #ffc107;
+}
+
+#complete-screen {
+  background-image: url(images/state_pictures/sudoku_clear.png);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+#gameover-screen {
+  background-image: url(images/state_pictures/sudoku_gameover.png);
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+
+
+/*====================
+  9. アニメーション
+====================*/
+
+@keyframes fadeIn {
+  0% { opacity: 0; transform: scale(0.8);}
+  100% { opacity: 1; transform: scale(1);}
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); } 
+}
+
+@keyframes blinkAnim {
+  0%, 50%, 100% {
+    opacity: 1;
+  }
+  25%, 75% {
+    opacity: 0.2;
+  }
+}
+
+@keyframes correctBlink {
+  0% { background-color: #7fff7f; }
+  100% { background-color: inherit; }
+}
+
+
+
+/*====================
+10. レスポンシブ
+====================*/
+
+
+@media (max-width: 600px) {
+  
+  #top-content {
+    background-image: url("images/state_pictures/sudoku_top_responsive.png");
+  }
+
+  #title-area {
+    font-size: 1vh;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  #difficulty-select {
+    display:flex;
+    flex-direction: column;
+    gap: 10px;
+    width: min(320px, 90vh);
+    margin: 0 auto;
+
+    .difficulty-btn {
+      width: 100%;
+      margin: 0;
+      font-size: 14px;
+      padding: 12px 16px;
+    }
+
+  }
+
+  #start-btn {
+    width: min(320px, 90vh);
+    margin-top: 14px;
+    font-size: 14px;
+    padding: 14px 16px;
+  }
+  #main-area {        
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #sudoku {
+    height: auto;
+    width: 100%;
+    order: 2;
+  }
+
+  #panel-area {
+    height: auto;
+    width: 100%;
+    order: 3;
+  }
+
+  #number-panel {
+    height: auto;
+    width: 100%;
+    flex-direction: row;
+  }
+
+  #number-panel button {
+    aspect-ratio: 1/1.2
+  }
+
+  #side-area {
+    display: contents;
+    flex-direction: row;
+    order: 1;
+      
+  }
+
+  #ui-area {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  
+  }
+
+  #status-area {
+    order:1;
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    
+  }
+
+  .life-wrapper {
+    display: flex;
+    align-items: center;
+  }
+
+  #action-area {
+    display:flex;
+    order: 2;
+    gap: 8px;
+  }
+
+  #character-area {
+    order: 99;
+    display: flex;
+    justify-content: center;
+  }
+
+  #character-area img {
+    max-height: 18vh;
+    max-width: 100%;       
+  }
+
+  #complete-screen {
+    background-image: url(images/state_pictures/sudoku_clear_responsive.png);
+  }
+
+  #gameover-screen {
+    background-image: url(images/state_pictures/sudoku_gameover_responsive.png);
+  }
+
+}
+
+
+@media (min-width: 601px) and (max-width: 1024px) {
+  #sudoku {
+    width: 65vw;
+  }
+  
+  #side-area {
+    gap:24px;
+  }
+
+
+  
+}

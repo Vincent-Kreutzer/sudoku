@@ -1,4 +1,6 @@
 import {
+  charMovementByResult,
+  charMovementByGameState,
   ui,    
   STATE,
   gameState,  
@@ -253,7 +255,7 @@ function makePuzzle() {
 //【ゲームロジック】
 
 //セルを固定化するためにイベント処理をできなくする
-function finalizeCell(cell) { cell => {
+function finalizeCell() { cell => {
   cell.removeEventListener("click", handleCellClick);
 }
 }
@@ -275,6 +277,7 @@ function checkAndConfirm() {
   "cell:", gameState.selectedCell,
   "num", gameState.selectedNum
 );
+
   if (gameState.currentState !== STATE.PLAYING) return;
 
   //入力チェック：selectedCellとselectedNumが揃っているか
@@ -304,6 +307,7 @@ function checkAndConfirm() {
             
       handleCorrect(gameState.selectedCell); 
       accumulateCorrect();//正解数置き場に+1する
+      charMovementByResult("correct")
       notifyTurnResult("correct");                  
 
       
@@ -314,6 +318,7 @@ function checkAndConfirm() {
       //updateCountState(gameState.selectedNum, +1);
       decrementLifeAndUpdateUI();       
       updateLivesDisplay();
+      charMovementByResult("incorrect")
       notifyTurnResult("incorrect");
       
     }
@@ -329,8 +334,11 @@ function notifyTurnResult(result) {
     //ライフが0の時の処理
     if (gameState.lifePoints === 0) {
       setState(STATE.GAME_OVER);
-      showGameover(); 
-      return;     
+      charMovementByGameState("STATE.GAME_OVER")
+      setTimeout(() => {
+        showGameover(); 
+        return; 
+      }, 1600);    
     }
   }  
 
@@ -339,8 +347,11 @@ function notifyTurnResult(result) {
     //盤面が完成した時の処理
     if (isPuzzleComplete()) {
       setState(STATE.CLEARED);
-      showComplete();
-      return;
+      charMovementByGameState(STATE.CLEARED)
+      setTimeout(() => {
+        showComplete();
+        return;
+      }, 1600);
     }  
   } 
 }

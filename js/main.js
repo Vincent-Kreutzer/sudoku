@@ -26,12 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
   initEvents();//トップ画面のボタンのクリックイベント
 });
 
+
 //状態毎に関数を実行
 function onStateChange() {
   const state = gameState.currentState;
-  console.log("[ENTER]", prevState, "->", gameState.currentState);
-
-  
+  console.log("[ENTER]", prevState, "->", gameState.currentState); 
 
   console.log("[TRACE] currentState =", gameState.currentState);
   console.log("[TRACE] STATE.PLAYING =", STATE.PLAYING);
